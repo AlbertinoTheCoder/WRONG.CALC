@@ -1,7 +1,7 @@
 <div align="center">
 
 <a href="https://albertinothecoder.github.io/WRONG.CALC/">
-  <img src="wrong-calc-hero1.png" alt="Play WRONG.CALC" width="100%">
+  <img src="wrong-calc-hero-hd.png" alt="Play WRONG.CALC" width="100%">
 </a>
 
 <br>

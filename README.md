@@ -3,7 +3,7 @@
 
 <img src="https://api.iconify.design/solar/calculator-bold-duotone.svg?color=%23a78bfa" width="85" alt="WRONG.CALC Logo">
 
-# WRONG.CALC
+<h1 align="center">WRONG.CALC</h1>
 
 **Your everyday, miscalculated.**
 
@@ -17,7 +17,6 @@ A calculator that lives in your browser and absolutely refuses to do mathematics
 ![MIT](https://img.shields.io/badge/license-MIT-8B5CF6?style=flat-square)
 ![Math](https://img.shields.io/badge/accuracy-0%25-red?style=flat-square)
 
-<br>
 
 <img src="preview-v2.png" alt="WRONG.CALC" width="700">
 </div>

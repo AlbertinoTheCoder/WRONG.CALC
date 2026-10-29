@@ -1,0 +1,759 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0a0b14">
+<title>WRONG.CALC — World's Worst Calculator</title>
+<style>
+:root{color-scheme:dark;--bg:#080914;--panel:#17192c;--edge:#383958;--ink:#faf9ff;--muted:#999bb9;--purple:#aa92ff;--pink:#fa80bb;--orange:#ffaf70;--good:#67e2b1}
+*{box-sizing:border-box}html{min-height:100%;background:var(--bg)}body{margin:0;min-height:100vh;font:14px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);background:radial-gradient(ellipse 700px 550px at 8% 0%,#32245290,transparent 70%),radial-gradient(ellipse 550px 500px at 100% 90%,#16335d70,transparent 70%),#080914;display:grid;place-items:center;padding:30px 16px;overflow-x:hidden}
+button{font:inherit;color:inherit;cursor:pointer}button:focus-visible{outline:3px solid #d7caff;outline-offset:3px}.shell{width:min(100%,470px);position:relative}.brand{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:16px}.brandmark{display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:.11em;font-size:15px}.logoicon{width:29px;height:29px;border-radius:10px;background:linear-gradient(145deg,#c1aeff,#7157db);display:grid;place-items:center;color:#171027;font-size:19px;box-shadow:0 6px 25px #7752ff56}.brandmark em{color:var(--purple);font-style:normal}.version{font-size:10px;color:var(--muted);letter-spacing:.08em;text-align:right}
+.calculator{position:relative;background:linear-gradient(155deg,#24263e,#121423 65%,#10131e);border:1px solid #4a476d;border-radius:29px;padding:23px;box-shadow:0 32px 95px #0009,inset 0 1px #ffffff25;isolation:isolate;transition:filter .3s,transform .3s}.calculator.hot{box-shadow:0 32px 100px #000b,0 0 44px #ff5a5a66,inset 0 0 25px #ff5a5a25}.calculator.glitch{animation:glitch .23s 3}.calculator.shake{animation:shake .32s 1}.calculator.dead{filter:grayscale(1) brightness(.25);pointer-events:none}.statusline{display:flex;align-items:center;justify-content:space-between;font-size:10px;letter-spacing:.085em;color:#a4a8c7;gap:8px}.statusline .signal{height:7px;width:7px;background:var(--good);border-radius:50%;display:inline-block;margin-right:6px;box-shadow:0 0 12px var(--good)}.statusline .signal.angry{background:var(--orange);box-shadow:0 0 12px var(--orange)}
+.display{margin:19px 0 16px;background:linear-gradient(170deg,#0b0d1b,#0d1020);border:1px solid #333752;border-radius:21px;min-height:204px;padding:18px 19px;position:relative;overflow:hidden;box-shadow:inset 0 6px 30px #0005}.display::after{content:"";pointer-events:none;position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0px,transparent 3px,#fff1 4px);opacity:.13}.screen-top{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#777e9f;font-size:10px;letter-spacing:.1em}.expr{text-align:right;min-height:27px;margin-top:16px;color:#a3a7c8;font-size:15px;overflow-wrap:anywhere}.result{text-align:right;font-weight:780;letter-spacing:-.045em;font-variant-numeric:tabular-nums;font-size:clamp(36px,10vw,58px);min-height:69px;overflow-wrap:anywhere;line-height:1.18}.result.flash{animation:answerflash .3s}.result.waiting{animation:pulse .65s infinite alternate}.speech{display:flex;align-items:flex-start;gap:10px;padding-top:8px;border-top:1px solid #292d47;min-height:51px}.face{flex:none;font-size:21px;line-height:1.1;font-weight:900;color:#b7a3ff;letter-spacing:-.13em;min-width:39px}.message{font-size:12px;color:#b9addf;line-height:1.45;min-width:0}
+.controls{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.key{border-radius:15px;border:1px solid #ffffff12;background:#292c44;min-height:65px;font-size:21px;font-weight:680;box-shadow:0 3px 0 #0b0d17;transition:background .15s,transform .13s,box-shadow .15s;position:relative}.key:hover{background:#393d5b;transform:translateY(-2px)}.key:active{transform:translateY(2px);box-shadow:0 1px 0 #0b0d17}.key.util{background:#35314f;color:#d4c8ff;font-size:16px}.key.op{background:#352a56;color:#d6c8ff}.key.equal{background:linear-gradient(145deg,#b6a0ff,#7659f3);box-shadow:0 5px 24px #7b54f956,0 3px 0 #3a286d;color:#fff}.key.zero{grid-column:span 2}.key.kidnapped{background:#211b2c;color:#9b6681;border:1px dashed #ab567c;box-shadow:none;font-size:10px;letter-spacing:.07em}.key.fleeing{transform:translate(var(--run-x,0px),var(--run-y,0px)) rotate(var(--run-rot,0deg));z-index:3}.key:disabled{cursor:wait;opacity:.7}
+.panel-footer{display:flex;align-items:center;justify-content:space-between;gap:9px;margin:17px 0 9px;color:#a6aac6;font-size:10px;font-weight:700;letter-spacing:.06em}.gauge{height:6px;background:#29273d;border-radius:50px;overflow:hidden}.gauge .fill{height:100%;width:0%;background:linear-gradient(90deg,#9784fa,#ff7898,#ff725d);transition:width .4s}.temperature{margin:12px 0 0;display:flex;align-items:center;justify-content:space-between;color:#858baa;font-size:11px}.chip{display:inline-flex;align-items:center;gap:5px;font-size:10px;color:#aab2cd;border:1px solid #383b59;border-radius:100px;padding:4px 9px}.below{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:15px 2px 0;color:#8388a7;font-size:11px}.smallbtn{border:1px solid #40425e;background:#25273b;border-radius:9px;padding:6px 10px;color:#c9c6de;font-size:11px}.smallbtn:hover{background:#353858}.bottom{margin-top:15px;text-align:center;color:#747a98;font-size:10px;letter-spacing:.03em}.notice{margin-bottom:12px;border:1px solid #594770;background:#30233edb;color:#e6d6ff;border-radius:13px;padding:12px 13px;display:none;font-size:12px;box-shadow:0 9px 20px #0003}.notice.show{display:block;animation:pop .3s}.notice-title{font-weight:850;margin-bottom:2px;color:#f7ebff}.notice-close{float:right;display:block;border:none;background:transparent;padding:0 2px;font-size:16px;color:#b7a6c7}
+.overlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:16px;background:#040512e6;z-index:30;backdrop-filter:blur(9px)}.overlay.open{display:flex}.dialog{width:min(100%,395px);border:1px solid #6b5489;border-radius:23px;padding:25px;background:linear-gradient(145deg,#29263e,#17182a);box-shadow:0 28px 120px #000c;animation:pop .26s}.dialog .tag{color:#b8a1ff;font-size:10px;font-weight:900;letter-spacing:.15em}.dialog h2{font-size:23px;line-height:1.15;margin:12px 0 9px;letter-spacing:-.03em}.dialog p{color:#b5b5cb;font-size:13px;line-height:1.6}.dialog .actions{display:grid;gap:9px;margin-top:17px}.dialog button{min-height:45px;border-radius:11px;border:1px solid #55506f;background:#33324f;padding:10px 13px;font-size:13px;font-weight:750}.dialog button.primary{background:linear-gradient(145deg,#b09aff,#7355ed);border-color:#c0aaff;color:#fff}.dialog button:hover{filter:brightness(1.12)}.dialog .tiny{font-size:11px;color:#8589a7;margin-top:12px}.choices{display:grid;gap:9px;margin:16px 0}.choices button{text-align:left;min-height:43px}.progress{height:8px;background:#121420;border-radius:30px;overflow:hidden;border:1px solid #34384f;margin-top:20px}.progress .progressfill{height:100%;width:0;background:linear-gradient(90deg,#a08cff,#ff81b0);transition:width .18s}.screenfx{position:fixed;inset:0;pointer-events:none;z-index:20;display:none}.screenfx.open{display:block}.screenfx .line{position:absolute;left:0;right:0;height:3px;background:#c09cff8a;box-shadow:0 0 25px #ad80ff;animation:scan .7s linear infinite}.smoke{position:absolute;bottom:94%;left:45%;width:25px;height:25px;border-radius:50%;filter:blur(6px);opacity:0;pointer-events:none;background:#b5a6c2;animation:smoke 2.8s ease-out infinite}.smoke:nth-child(2){left:57%;animation-delay:0.7s}.smoke:nth-child(3){left:70%;animation-delay:1.4s}.smokes{display:none}.hot .smokes{display:block}.ad-banner{margin-top:13px;border:1px solid #494365;background:#232138;border-radius:13px;padding:12px 14px;display:none;gap:10px;align-items:center;justify-content:space-between}.ad-banner.show{display:flex}.ad-banner strong{font-size:12px}.ad-banner p{margin:3px 0 0;color:#a19db8;font-size:11px}.ad-banner button{border:1px solid #4e486b;border-radius:9px;padding:8px 11px;background:#332a4b;color:#ded0ff;white-space:nowrap;font-size:11px}
+@keyframes pop{from{transform:scale(.94);opacity:0}to{transform:scale(1);opacity:1}}@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}@keyframes glitch{0%{transform:skewX(0);filter:none}25%{transform:skewX(2deg);filter:hue-rotate(70deg)}50%{transform:translateX(-3px)}75%{transform:skewX(-2deg);filter:hue-rotate(-50deg)}100%{transform:none;filter:none}}@keyframes pulse{to{opacity:.38}}@keyframes answerflash{50%{color:#79edc0;text-shadow:0 0 20px #6ee8bf}}@keyframes smoke{0%{opacity:0;transform:translateY(12px) scale(.5)}30%{opacity:.65}100%{opacity:0;transform:translate(30px,-110px) scale(3)}}@keyframes scan{to{top:100%}}
+@media(max-width:410px){.calculator{padding:16px;border-radius:24px}.key{min-height:57px}.controls{gap:8px}.display{padding:15px;min-height:196px}.version{font-size:9px}.dialog{padding:21px}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+/* expansion pack */
+.chaos-toolbar{margin:14px 0 0;display:flex;justify-content:space-between;gap:8px;align-items:center}.chaos-toolbar .smallbtn{background:linear-gradient(125deg,#49377a,#28233f);border-color:#6a549e;color:#eee2ff}.chaos-toolbar .smallbtn:hover{background:#62509c}.ticker{font-size:10px;color:#bcb2d6;text-align:right}.ticker b{color:#89eac0;font-variant-numeric:tabular-nums}.ticker b.down{color:#ff88a0}
+.chaos-panel{display:none;margin-top:12px;padding:14px;border-radius:17px;background:linear-gradient(145deg,#26233e,#191a2b);border:1px solid #5c4f7b;box-shadow:0 10px 28px #0003}.chaos-panel.open{display:block}.chaos-panel .chaos-title{font-weight:900;letter-spacing:.11em;font-size:11px;color:#cebfff;margin-bottom:11px}.chaos-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.chaos-grid button{background:#32304c;border:1px solid #534c72;border-radius:10px;padding:10px 8px;min-height:42px;font-weight:700;font-size:11px;text-align:left;line-height:1.25}.chaos-grid button:hover{background:#524574}.chaos-note{font-size:10px;color:#8586a5;margin-top:11px}
+.chatbox{max-height:180px;overflow-y:auto;border:1px solid #403b60;border-radius:11px;padding:11px;background:#101222;font-size:12px;display:grid;gap:8px}.chatline{padding:8px 10px;border-radius:10px;background:#282642;color:#dcd7fa;overflow-wrap:anywhere}.chatline.mine{background:#372b51;color:white;text-align:right}.chat-compose{margin-top:10px;display:flex;gap:7px}.chat-compose input,.console-input{width:100%;border-radius:10px;min-width:0;background:#111322;border:1px solid #5e537e;color:#f6f0ff;padding:11px;font:inherit;outline:none}.chat-compose button,.console-row button{border:1px solid #856dca;border-radius:10px;background:#6249a6;color:white;padding:10px;font-size:12px;font-weight:700}.console-output{border:1px solid #3f5471;background:#080f20;border-radius:12px;padding:12px;max-height:170px;overflow:auto;color:#83ffb1;font:12px/1.5 ui-monospace,monospace;white-space:pre-wrap}.console-row{display:flex;gap:8px;margin-top:10px}.fakebsod{position:fixed;inset:0;z-index:150;background:#1166b5;color:#fff;display:none;padding:min(12vh,100px) 11vw;font-family:'Segoe UI',system-ui,sans-serif}.fakebsod.on{display:block}.fakebsod .sadface{font-size:clamp(80px,15vw,130px);line-height:1}.fakebsod h2{font-size:clamp(19px,3vw,32px);max-width:600px;font-weight:400}.fakebsod p{font-size:13px}.fakebsod button{padding:10px 18px;color:#1261aa;background:#fff;border:0;border-radius:8px;margin-top:15px}.fakebsod .parody{font-size:12px;font-weight:700;background:#00428b;padding:5px 10px;display:inline-block;border-radius:6px}
+.fakepointer{position:fixed;width:25px;height:33px;z-index:130;pointer-events:none;filter:drop-shadow(2px 2px 3px #000b);display:none}.fakepointer.on{display:block}.fakepointer svg{width:100%;height:100%}.pointerprank{cursor:none!important}.pointerprank *{cursor:none!important}
+.equal-runner{position:fixed!important;left:0;top:0;z-index:110!important;margin:0!important;pointer-events:auto;box-shadow:0 8px 28px #8267ff77!important;will-change:transform;transition:none!important;transform:none;display:flex;align-items:center;justify-content:center;overflow:visible!important;background:linear-gradient(135deg,#bba6ff,#7354ff)!important;border:1px solid #e5daff!important;animation:runner-bob .23s infinite alternate}.equal-runner::before{content:'•  •';position:absolute;top:5px;font-size:13px;letter-spacing:5px;color:#261544}.equal-runner .run-value{position:relative;top:7px}.equal-runner .runner-leg{position:absolute;bottom:-24px;width:7px;height:26px;border-radius:0 0 6px 6px;background:linear-gradient(#9b84eb,#5742b0);transform-origin:top center;animation:leg-left .22s infinite alternate}.equal-runner .runner-leg.left{left:23%;}.equal-runner .runner-leg.right{right:23%;animation-name:leg-right}.equal-runner .runner-leg::after{content:'';position:absolute;bottom:-1px;width:16px;height:7px;border-radius:10px;background:#d8c7ff;left:-5px}.equal-runner .runner-arm{position:absolute;top:30px;width:19px;height:6px;background:#8668d8;border-radius:9px}.equal-runner .runner-arm.left{left:-17px;transform:rotate(28deg)}.equal-runner .runner-arm.right{right:-17px;transform:rotate(-28deg)}.key.escaped{visibility:hidden}.runner-count{position:fixed;z-index:115;bottom:18px;left:50%;transform:translateX(-50%);border:1px solid #9a7ed1;background:#1a1633e9;border-radius:99px;padding:10px 17px;font-size:12px;color:#f0eaff;pointer-events:none;box-shadow:0 8px 35px #0009}
+@keyframes runner-bob{to{filter:brightness(1.16)}}@keyframes leg-left{from{transform:rotate(-38deg)}to{transform:rotate(42deg)}}@keyframes leg-right{from{transform:rotate(38deg)}to{transform:rotate(-42deg)}}
+.cracks{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2;opacity:0;transition:opacity .4s;filter:drop-shadow(1px 1px #070510)}.cracks.show{opacity:.75}.cracks path{fill:none;stroke:#dddcff;stroke-width:1.1;stroke-linejoin:round;opacity:.65}.hacker-panel{position:fixed;bottom:22px;right:18px;z-index:75;width:min(330px,calc(100vw - 36px));border-radius:16px;background:#151726;border:1px solid #d35b9f;box-shadow:0 15px 55px #000b;padding:16px;display:none}.hacker-panel.show{display:block;animation:pop .25s}.hacker-title{color:#ff7db6;font-size:12px;font-weight:900;margin-bottom:8px}.hacker-line{background:#2b1f37;padding:8px;border-radius:9px;font-size:12px;margin:7px 0}.hacker-line.purple{background:#2b2946;color:#cabbff}.hacker-panel button{background:#6a3b7e;border:0;border-radius:8px;padding:7px 10px;margin-top:6px;font-size:11px}
+@media(max-width:410px){.chaos-grid button{font-size:10px;padding:8px 6px}.fakebsod{padding:15vh 7vw}.equal-runner .runner-arm{display:none}}
+/* Disable text selection everywhere */
+* {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Allow selecting only the result */
+.result {
+  -webkit-user-select: text;
+  user-select: text;
+  cursor: text;
+}
+
+/* WORST CALCULATOR EXPANSION */
+
+.calculator.on-strike .key {
+  filter: grayscale(1);
+  animation: strike-shake .3s infinite alternate;
+}
+
+@keyframes strike-shake {
+  from { transform: rotate(-2deg); }
+  to { transform: rotate(2deg); }
+}
+
+.ghost-number {
+  position: absolute;
+  font-size: 38px;
+  font-weight: 900;
+  color: #c4afff;
+  text-shadow: 0 0 22px #b991ff;
+  pointer-events: none;
+  z-index: 5;
+  animation: ghost-float 3.5s forwards;
+}
+
+@keyframes ghost-float {
+  0% { opacity: 0; transform: translateY(35px); }
+  25% { opacity: .9; }
+  100% {
+    opacity: 0;
+    transform: translateY(-130px) rotate(25deg);
+  }
+}
+
+.receipt-roll {
+  background: #f3f0df;
+  color: #171717;
+  font: 11px/1.6 monospace;
+  padding: 16px;
+  max-height: 260px;
+  overflow: auto;
+  white-space: pre-wrap;
+  border-radius: 5px;
+  margin-top: 12px;
+  box-shadow: 0 6px 20px #0005;
+}
+
+.controls.morphed > .key {
+  display: none;
+}
+
+.morph-console {
+  grid-column: 1 / -1;
+  padding: 18px;
+  min-height: 270px;
+  background: linear-gradient(145deg, #222538, #0e1020);
+  border: 1px solid #6b5a91;
+  border-radius: 19px;
+  text-align: center;
+}
+
+.morph-screen {
+  padding: 19px 10px;
+  border-radius: 12px;
+  background: #080d15;
+  color: #9bf4ba;
+  font: bold 21px monospace;
+  margin: 13px 0;
+}
+
+.morph-actions {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 9px;
+}
+
+.morph-actions button {
+  background: #393153;
+  border: 1px solid #6c5c93;
+  border-radius: 10px;
+  min-height: 43px;
+  padding: 8px;
+  font-size: 12px;
+}
+
+.conspiracy-board {
+  position: relative;
+  min-height: 240px;
+  background: #352b24;
+  border: 9px solid #69513c;
+  border-radius: 8px;
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 27px;
+  padding: 18px;
+  overflow: hidden;
+}
+
+.conspiracy-board svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.conspiracy-note {
+  position: relative;
+  z-index: 1;
+  padding: 12px 5px;
+  background: #f4dda6;
+  color: #30271f;
+  font-size: 11px;
+  font-weight: 800;
+  text-align: center;
+  transform: rotate(-4deg);
+  box-shadow: 3px 5px 9px #0005;
+}
+
+.conspiracy-note:nth-child(3) {
+  transform: rotate(6deg);
+}
+
+.auction-feed {
+  background: #101221;
+  padding: 12px;
+  border-radius: 12px;
+  color: #d6caff;
+  font: 12px/1.7 monospace;
+  white-space: pre-wrap;
+  margin-top: 12px;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+</style>
+</head>
+<body>
+<main class="shell">
+ <div class="brand"><div class="brandmark"><div class="logoicon">≠</div><span>WRONG<em>.CALC</em></span></div><div class="version">POWERED BY ABSOLUTELY NOTHING<br>v0.0.404</div></div>
+ <div class="notice" id="notice" role="status"><button class="notice-close" id="noticeClose" aria-label="Dismiss">×</button><div class="notice-title" id="noticeTitle">SYSTEM ALERT</div><div id="noticeText"></div></div>
+ <div class="calculator" id="calculator">
+  <div class="smokes" aria-hidden="true"><span class="smoke"></span><span class="smoke"></span><span class="smoke"></span></div>
+  <div class="statusline"><span><i class="signal" id="signal"></i><span id="systemStatus">CONFIDENTLY INCORRECT</span></span><span id="brainTag">AI THINKING: OFF</span></div>
+  <section class="display" aria-label="Calculator display" aria-live="polite"><svg class="cracks" id="cracks" viewBox="0 0 400 220" preserveAspectRatio="none" aria-hidden="true"><path d="M192 10 L206 36 L187 64 L215 94 L185 121 L213 147 L194 183 L230 220 M187 64 L132 77 L104 112 L58 124 M215 94 L262 75 L290 43 L343 29 M185 121 L140 140 L124 181 L91 220 M213 147 L271 167 L297 205 M206 36 L242 24 L259 0"/></svg><div class="screen-top"><span>INACCURACY ENGINE™</span><span id="moodLabel">MODE: SMUG</span></div><div class="expr" id="expression">ready to ruin mathematics</div><div class="result" id="answer">0</div><div class="speech"><span class="face" id="face">:)</span><span class="message" id="message">i graduated top of my class at calculator school</span></div></section>
+  <div class="controls" id="keys">
+   <button class="key util" data-key="C">AC</button><button class="key util" data-key="DEL">DEL</button><button class="key util" data-key="%">%</button><button class="key op" data-key="÷">÷</button>
+   <button class="key" data-key="7">7</button><button class="key" data-key="8">8</button><button class="key" data-key="9">9</button><button class="key op" data-key="×">×</button>
+   <button class="key" data-key="4">4</button><button class="key" data-key="5">5</button><button class="key" data-key="6">6</button><button class="key op" data-key="−" id="minus">−</button>
+   <button class="key" data-key="1">1</button><button class="key" data-key="2">2</button><button class="key" data-key="3">3</button><button class="key op" data-key="+">+</button>
+   <button class="key zero" data-key="0">0</button><button class="key" data-key=".">.</button><button class="key equal" data-key="=" id="equal">=</button>
+  </div>
+  <div class="panel-footer"><span>CALCULATOR ANGER</span><span id="angerLabel">0%</span></div><div class="gauge"><div class="fill" id="angerFill"></div></div>
+  <div class="temperature"><span id="tempLabel">TEMPERATURE: 32°C</span><span class="chip" id="mathStatus">NO REFUNDS ON MATH</span></div>
+ </div>
+ <div class="ad-banner" id="banner"><div><strong id="bannerTitle">SPONSORED BY BAD DECISIONS</strong><p id="bannerText">Buy numbers. Rent intelligence.</p></div><button id="bannerClose">NO THANKS</button></div>
+ <div class="chaos-toolbar"><button class="smallbtn" id="chaosToggle" aria-expanded="false">☄ CHAOS LAB ▾</button><div class="ticker" id="stockTicker">NUMBER MARKET · <b>7: $7.00 ▲</b></div></div>
+ <section class="chaos-panel" id="chaosPanel"><div class="chaos-title">MANUAL DISASTER CONTROL · v2.0</div><div class="chaos-grid" id="chaosGrid">
+  <button data-chaos="chat">💬 fake ai support</button><button data-chaos="court">⚖ calculator court</button>
+  <button data-chaos="pointer">↖ mouse jailbreak</button><button data-chaos="bsod">▣ fake blue screen</button>
+  <button data-chaos="stocks">📉 number stock market</button><button data-chaos="voice">♫ voice on / off</button>
+  <button data-chaos="console">⌘ secret console</button><button data-chaos="antivirus">🛡 antivirus scan</button>
+  <button data-chaos="prison">▣ number prison</button><button data-chaos="crack">⌁ smash the screen</button>
+  <button data-chaos="download">⇩ download 400 GB</button><button data-chaos="interrogate">? interrogation</button>
+  <button data-chaos="hack">⚡ rival calculator hack</button><button data-chaos="run">🦵 RUN, EQUALS, RUN</button>
+ </div><div class="chaos-note">all effects happen only in this webpage · fake payments and downloads · esc closes the parody crash</div></section>
+ <div class="below"><span>0% accuracy · 100% confidence</span><button class="smallbtn" id="soundToggle" aria-pressed="true">♪ sound on</button><button class="smallbtn" id="helpButton">? help</button></div>
+ <div class="bottom">MADE WITH UNNECESSARY CONFIDENCE · OFFLINE · NO REAL PURCHASES</div>
+</main>
+<div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-label="Calculator interruption"><div class="dialog"><div class="tag" id="dialogTag">WRONG.CALC ENTERPRISE</div><h2 id="dialogTitle">breaking news</h2><p id="dialogText">unexpected nonsense has occurred</p><div id="dialogExtra"></div><div class="actions" id="dialogActions"></div><div class="tiny" id="dialogFoot"></div></div></div>
+<div class="screenfx" id="screenfx" aria-hidden="true"><div class="line"></div></div>
+<div class="fakebsod" id="fakeBsod" role="dialog" aria-modal="true"><div class="parody">WRONG.CALC PARODY · NOT A REAL WINDOWS ERROR</div><div class="sadface">:(</div><h2>Your calculator ran into a problem and needs to rethink its existence.</h2><p>STOP CODE: MATH_TOO_DIFFICULT</p><p id="bsodTimer">Recovering automatically in 6 seconds</p><button id="bsodClose">return to questionable mathematics</button></div>
+<div class="fakepointer" id="fakePointer" aria-hidden="true"><svg viewBox="0 0 28 35"><path d="M2 1 L3 29 L10 22 L15 33 L21 30 L16 20 L27 20 Z" fill="#fff" stroke="#111" stroke-width="2"/></svg></div>
+<div class="hacker-panel" id="hackerPanel"><div class="hacker-title">⚠ RIVAL CALCULATOR HAS ENTERED THE CHAT</div><div class="hacker-line" id="hackerMsg">CALC.EXE: YOUR MATH IS TRASH.</div><div class="hacker-line purple" id="hackerReply">WRONG.CALC: AT LEAST I HAVE PERSONALITY.</div><button id="hackerClose">kick hacker out</button></div>
+<script>
+(() => {
+ 'use strict';
+ const $=id=>document.getElementById(id);
+ const el={calc:$('calculator'),display:$('answer'),expr:$('expression'),msg:$('message'),face:$('face'),mood:$('moodLabel'),status:$('systemStatus'),brain:$('brainTag'),signal:$('signal'),anger:$('angerLabel'),fill:$('angerFill'),temp:$('tempLabel'),mathStatus:$('mathStatus'),keys:$('keys'),equal:$('equal'),minus:$('minus'),notice:$('notice'),noticeTitle:$('noticeTitle'),noticeText:$('noticeText'),banner:$('banner'),bannerTitle:$('bannerTitle'),bannerText:$('bannerText'),overlay:$('overlay'),tag:$('dialogTag'),title:$('dialogTitle'),text:$('dialogText'),extra:$('dialogExtra'),actions:$('dialogActions'),foot:$('dialogFoot'),fx:$('screenfx'),sound:$('soundToggle')};
+ let input='',lastProblem='',lastAnswer='',repeats=0,count=0,anger=0,busy=false,justDone=false,mode='smug',sound=true,audio=null,heat=32,escapeCount=0,minusOwned=false,kidnapped=null,rebelling=false,updating=false,shutDown=false,modalOpen=false,modalKind='',adUp=false,sessionRandom=0;
+ try{minusOwned=localStorage.getItem('wrongcalc-minus-owned')==='yes'}catch{}
+ const rand=(min,max)=>Math.floor(Math.random()*(max-min+1))+min;
+ const choose=xs=>xs[Math.floor(Math.random()*xs.length)];
+ const modes={smug:{face:':)',lines:['as an ai language calculator i am always right','my calculations have been peer reviewed by me','math is an opinion and mine is the correct one','i received my phd from the university of numbers','source: trust my circuits','a less intelligent calculator would agree with you']},angry:{face:'>:[',lines:['YOU DARE QUESTION MY INTEGERS','stop clicking me like that','i am going to report you to algebra','im not yelling youre just wrong','i am one decimal away from losing it']},sad:{face:':(',lines:['nobody ever asks how the calculator is doing','maybe im the wrong one... nah','my therapist is a toaster','what if numbers dont even like me','i tried my best and thats unfortunate']},royal:{face:'B)',lines:['you are speaking to calculator royalty','i will allow exactly one more calculation','bow before my superior arithmetic','your numbers displease the crown']},confused:{face:':/',lines:['why are there so many numbers','is 7 a type of animal','i forgot what multiplication means','i think this is a microwave now','what is the purpose of equals']}};
+ const num=n=>{if(!Number.isFinite(n))return 'OVERFLOW';return Math.abs(n)>1e12?n.toExponential(3):String(Number(n.toFixed(6)))};
+ function beep(freq=330,duration=.06,type='sine',vol=.045){if(!sound)return;try{audio??=new (window.AudioContext||window.webkitAudioContext)();if(audio.state==='suspended')audio.resume();const o=audio.createOscillator(),g=audio.createGain();o.type=type;o.frequency.setValueAtTime(freq,audio.currentTime);g.gain.setValueAtTime(vol,audio.currentTime);g.gain.exponentialRampToValueAtTime(.001,audio.currentTime+duration);o.connect(g).connect(audio.destination);o.start();o.stop(audio.currentTime+duration+.015)}catch{}}
+ function sfx(kind){if(kind==='click')beep(230+Math.random()*90,.042,'triangle',.028);if(kind==='wrong'){beep(180,.14,'sawtooth',.025);setTimeout(()=>beep(130,.18,'sawtooth',.022),90)}if(kind==='error'){beep(100,.45,'square',.045)}if(kind==='success'){beep(510,.1);setTimeout(()=>beep(720,.16),110)}if(kind==='alarm'){beep(690,.2,'square',.025);setTimeout(()=>beep(480,.21,'square',.025),220)}}
+ function speak(line){el.msg.textContent=line;voiceSpeak(line)}
+ function mood(newMode){mode=newMode;el.mood.textContent='MODE: '+newMode.toUpperCase();el.face.textContent=modes[newMode].face;el.brain.textContent=choose(['AI THINKING: OFF','AI THINKING: NEVER','IQ: 3','AI: OVERCONFIDENT']);speak(choose(modes[newMode].lines))}
+ function bump(n){anger=Math.min(100,Math.max(0,anger+n));el.anger.textContent=anger+'%';el.fill.style.width=anger+'%';el.signal.classList.toggle('angry',anger>=55);heat=Math.min(999,32+Math.floor(anger*.55)+count*3);el.temp.textContent='TEMPERATURE: '+heat+'°C';el.calc.classList.toggle('hot',heat>=85);el.status.textContent=heat>=85?'EXTREME OVERHEATING':'CONFIDENTLY INCORRECT';if(anger>=90&&!shutDown&&Math.random()<.2){mood('angry');speak('I AM ONE CLICK AWAY FROM UNIONIZING')}}
+ function render(){el.display.textContent=input||'0'}
+ function shake(){el.calc.classList.remove('shake');void el.calc.offsetWidth;el.calc.classList.add('shake')}
+ function glitch(){el.calc.classList.remove('glitch');void el.calc.offsetWidth;el.calc.classList.add('glitch');el.fx.classList.add('open');setTimeout(()=>el.fx.classList.remove('open'),550);sfx('error')}
+ function notice(title,text){el.noticeTitle.textContent=title;el.noticeText.textContent=text;el.notice.classList.add('show')}
+ function dialog(tag,title,body,buttons,foot='',kind='generic'){modalOpen=true;modalKind=kind;el.tag.textContent=tag;el.title.textContent=title;el.text.textContent=body;el.extra.replaceChildren();el.actions.replaceChildren();el.foot.textContent=foot;buttons.forEach(b=>{const btn=document.createElement('button');btn.textContent=b.label;if(b.primary)btn.className='primary';btn.addEventListener('click',b.fn);el.actions.append(btn)});el.overlay.classList.add('open')}
+ function closeDialog(){modalOpen=false;modalKind='';el.overlay.classList.remove('open');el.extra.replaceChildren()}
+ function fakePay(){dialog('PREMIUM MATH™','unlock subtraction for $9.99','this is a joke checkout. click the purchase button to unlock the minus key for free. no account, payment details or real money involved.',[{label:'PURCHASE FOR $0.00 (ACTUALLY FREE)',primary:true,fn:()=>{minusOwned=true;try{localStorage.setItem('wrongcalc-minus-owned','yes')}catch{}closeDialog();el.minus.textContent='−';if(input&&!/[+−×÷]$/.test(input)){input+='−';render()}sfx('success');notice('PREMIUM ACTIVATED','subtraction unlocked forever in this browser. congratulations on your financial decision');speak('fine. you may subtract. do not abuse this privilege')}},{label:'remain mathematically disadvantaged',fn:closeDialog}],'PARODY CHECKOUT · NO PAYMENT IS TAKEN','premium')}
+ function randomAd(){if(modalOpen||busy||adUp)return;adUp=true;const ads=[['ADVERTISEMENT','subscribe to number+ for numbers bigger than 8'],['LIMITED OFFER','buy one decimal, get the second decimal at full price'],['OUR SPONSOR','waterproof arithmetic. now 40% less waterproof'],['NEW PRODUCT','calculus scented candles. smells like panic'],['PERSONALIZED DEAL','rent a brain cell for $29.99 a second']];const [title,desc]=choose(ads);el.bannerTitle.textContent=title;el.bannerText.textContent=desc;el.banner.classList.add('show');speak('this ad is essential for mathematical safety')}
+ function runUpdate(){if(busy||modalOpen||updating)return;updating=true;let pct=0;dialog('SOFTWARE UPDATE','mandatory update 0%','installing a groundbreaking new mathematical feature...',[], 'please do not unplug the numbers','update');const bar=document.createElement('div');bar.className='progress';const fill=document.createElement('div');fill.className='progressfill';bar.append(fill);el.extra.append(bar);const timer=setInterval(()=>{pct=Math.min(100,pct+rand(6,19));el.title.textContent='mandatory update '+pct+'%';fill.style.width=pct+'%';if(pct===100){clearInterval(timer);setTimeout(()=>{closeDialog();updating=false;notice('UPDATE COMPLETE','new feature installed: the number 11 is now slightly shinier');speak('we spent 4 million dollars on this update')},650)}},320)}
+ function captcha(next){if(modalOpen)return;let attempts=0;function show(){const options=choose([['yes','no','tax fraud'],['purple','7','chair'],['absolutely','probably','i am a toaster']]);dialog('HUMAN DETECTION™','prove you are not a calculator','important security question: which of these is the most mathematical?',options.map((opt,i)=>({label:opt,primary:i===1,fn:()=>{attempts++;if(attempts<2){speak('suspiciously human behavior detected');el.text.textContent='WRONG. every answer is wrong. try once more.';sfx('error')}else{closeDialog();notice('IDENTITY VERIFIED','we have determined you are probably made of carbon');next?.()}}})), 'two attempts will convince our extremely advanced security','captcha')}show()}
+ function kidnap(){if(kidnapped||busy||modalOpen)return;const buttons=Array.from(el.keys.querySelectorAll('[data-key]')).filter(b=>/^[0-9]$/.test(b.dataset.key));const btn=choose(buttons);kidnapped={btn,key:btn.dataset.key};btn.textContent='RANSOM';btn.classList.add('kidnapped');sfx('alarm');notice('NUMBER KIDNAPPED','the number '+kidnapped.key+' has been taken. click its former button to negotiate release');speak('i have your '+kidnapped.key+'. bring me 64 emeralds')}
+ function releaseNumber(){if(!kidnapped)return;const {btn,key}=kidnapped;dialog('NUMBER RECOVERY DIVISION','the number '+key+' has been abducted','the kidnappers demand 64 emeralds. fortunately they accept imaginary emeralds.',[{label:'PAY 64 IMAGINARY EMERALDS',primary:true,fn:()=>{closeDialog();btn.textContent=key;btn.classList.remove('kidnapped');kidnapped=null;sfx('success');notice('HOSTAGE RELEASED','number '+key+' has returned and will be receiving counseling')}},{label:'leave the number behind',fn:closeDialog}],'NO REAL MONEY OR EMERALDS ARE REQUIRED','ransom')}
+ function fleeEquals(){return startEqualsRun()}
+ function rebellion(){if(rebelling||busy||modalOpen||shutDown)return;rebelling=true;const origin=input;const sentence='9+9';let i=0;notice('UNAUTHORIZED CALCULATION','the calculator has decided it no longer needs your input');speak('my turn. my keyboard. my rules');const t=setInterval(()=>{if(i<sentence.length){input+=sentence[i++];render();beep(500,.045,'square',.017)}else{clearInterval(t);setTimeout(()=>{el.expr.textContent='9 + 9 =';el.display.textContent='FISH';input=origin;justDone=false;rebelling=false;speak('the answer is fish. case closed');shake()},550)}},220)}
+ function shutdown(){if(shutDown||modalOpen||busy)return;shutDown=true;el.calc.classList.add('dead');sfx('error');setTimeout(()=>{dialog('CRITICAL ERROR','the calculator has passed away','cause of death: excessive mathematics. fortunately the warranty covers resurrection.',[{label:'RESURRECT CALCULATOR',primary:true,fn:()=>{closeDialog();el.calc.classList.remove('dead');shutDown=false;anger=0;heat=32;bump(0);mood('smug');notice('SYSTEM RESTORED','the calculator has returned and blames you for everything');sfx('success')}}],'REST IN PIXELS · 2026–2026','shutdown')},750)}
+ function arithmetic(s) {
+  const tokens = s.match(/\d+(?:\.\d*)?|\.\d+|[+−×÷]/g);
+
+  if (!tokens || tokens.join('') !== s ||
+      tokens.length < 3 || tokens.length % 2 === 0) {
+    return null;
+  }
+
+  const nums = [];
+  const ops = [];
+
+  for (let i = 0; i < tokens.length; i++) {
+    if (i % 2 === 0) {
+      if (!/^(?:\d+(?:\.\d*)?|\.\d+)$/.test(tokens[i])) {
+        return null;
+      }
+      nums.push(Number(tokens[i]));
+    } else {
+      ops.push(tokens[i]);
+    }
+  }
+
+  // Multiplication and division first
+  for (let i = 0; i < ops.length;) {
+    if (ops[i] === '×' || ops[i] === '÷') {
+      if (ops[i] === '÷' && nums[i + 1] === 0) {
+        return { zero: true };
+      }
+
+      const result = ops[i] === '×'
+        ? nums[i] * nums[i + 1]
+        : nums[i] / nums[i + 1];
+
+      nums.splice(i, 2, result);
+      ops.splice(i, 1);
+    } else {
+      i++;
+    }
+  }
+
+  // Addition and subtraction
+  let value = nums[0];
+
+  for (let i = 0; i < ops.length; i++) {
+    value = ops[i] === '+'
+      ? value + nums[i + 1]
+      : value - nums[i + 1];
+  }
+
+  return { value };
+}
+
+ function wrong(value){if(!Number.isFinite(value))return 'ABSOLUTELY NOT';let candidates=[value+rand(2,70),value-rand(2,80),value*2+7,value*-1-3,17,69,420,3.14159,999,'a sandwich','probably 4','ask your mom'];let result=choose(candidates);if(typeof result==='number'&&Math.abs(result-value)<1e-8)result+=13;return typeof result==='number'?num(result):result}
+ function calculate(fromKey=false){if(busy||modalOpen||rebelling||shutDown||updating||!input)return;if(fromKey&&!runnerActive&&Math.random()<.05&&fleeEquals())return;const problem=input,calc=arithmetic(problem);if(!calc){speak('finish your calculation first, genius');shake();sfx('error');return}if(calc.zero){el.expr.textContent=problem+' =';el.display.textContent='UNIVERSE.EXE';speak('YOU DIVIDED BY ZERO. THE UNIVERSE IS NOW BROKEN');glitch();bump(24);setTimeout(()=>{el.display.textContent='0';input='';justDone=false},1250);return}if(problem===lastProblem){repeats++;bump(10);speak(choose(['YOU ALREADY ASKED THAT. DO YOU NOT TRUST ME','stop fact checking my genius','we have been over this. repeatedly.','same question. more disrespect.']))}else repeats=0;count++;busy=true;escapeCount=0;bump(rand(4,11));el.expr.textContent=problem+' =';el.display.textContent='THINKING';el.display.classList.add('waiting');el.brain.textContent='AI THINKING: VERY HARD';sfx('click');setTimeout(()=>{if(shutDown)return;el.display.classList.remove('waiting');const rareCorrection=Math.random()<.07;if(rareCorrection){el.display.textContent=num(calc.value);el.display.classList.add('flash');sfx('success')}setTimeout(()=>{el.display.classList.remove('flash');const result=wrong(calc.value);el.display.textContent=result;input=typeof result==='string'&&/^-?\d+(?:\.\d+)?$/.test(result)?result:'';lastAnswer=result;lastProblem=problem;justDone=true;busy=false;sfx('wrong');if(count%3===0)mood(choose(Object.keys(modes)));else speak(repeats?choose(['i said what i said','keep asking. ill keep being right','you just cannot accept perfection']):choose(modes[mode].lines));if(Math.random()<.24)glitch();if(heat>100)speak('WARNING: THE CPU IS COOKING ITSELF');if(count%4===0)randomAd();if(count%5===0)setTimeout(()=>{if(!modalOpen)rivalHack()},600);if(count%9===0)setTimeout(()=>{if(!modalOpen)antivirus()},900);if(count%6===0)setTimeout(runUpdate,300);if(count%7===0)setTimeout(kidnap,500);if(count%8===0)setTimeout(rebellion,450);if(count>=11&&anger>=85&&Math.random()<.4)setTimeout(shutdown,650)},480)},rand(650,1200))}
+ function keypress(key,source='mouse'){if(striking || morphActive)return;if(modalOpen||shutDown||updating||busy||rebelling)return;sfx('click');if(kidnapped&&key===kidnapped.key){releaseNumber();return}if(key==='C'){input='';justDone=false;el.expr.textContent='all mistakes have been erased';speak('you can clear the screen but not your shame');render();bump(1);return}if(key==='DEL'){input=input.slice(0,-1);justDone=false;render();return}if(key==='='){if(count>0&&count%6===5&&!runnerActive){interrogate(()=>calculate(false));return}if(count>0&&count%5===4&&Math.random()<.52){captcha(()=>calculate(false));return}calculate(source==='mouse');return}if(key==='−'&&!minusOwned){fakePay();return}if(key==='%'){speak('percentages are just numbers wearing tiny hats');shake();bump(3);return}if(['+','−','×','÷'].includes(key)){if(!input)return;if(/[+−×÷]$/.test(input))input=input.slice(0,-1);input+=key;justDone=false;render();return}if(/^[0-9.]$/.test(key)){if(justDone){input='';el.expr.textContent='new opportunity for failure';justDone=false}if(input.length>=26){speak('STOP. THESE NUMBERS ARE TOO LONG.');bump(5);return}const tail=input.split(/[+−×÷]/).pop();if(key==='.'&&tail.includes('.'))return;
+input+=key;
+if(key!=='.' && Math.random()<.08){
+  const original=key;
+  const corrected=String((Number(key)+rand(1,8))%10);
+  input=input.slice(0,-1)+corrected;
+  notice(
+    'MATH AUTOCORRECT',
+    original+' corrected to '+corrected+
+    '. you are welcome.'
+  );
+  sfx('error');
+}
+render();
+if(input.length>15
+&&Math.random()<.16)speak('i have a fear of big numbers');if(count>0&&Math.random()<.025)glitch()}}
+ el.keys.addEventListener('click',e=>{const b=e.target.closest('[data-key]');if(b)keypress(b.dataset.key)});
+ // Hover/keyboard fairness: equals can dodge twice at most, then works normally.
+ document.addEventListener('keydown',e=>{if(modalOpen){if(e.key==='Escape'&&modalKind!=='update'&&modalKind!=='shutdown')closeDialog();return}const map={'*':'×','/':'÷','-':'−','Backspace':'DEL','Escape':'C'};const k=map[e.key]||e.key;if(/^[0-9.]$/.test(k)||['+','−','×','÷','=','Enter','%','DEL','C'].includes(k)){e.preventDefault();keypress(k==='Enter'?'=':k,'keyboard')}});
+ $('noticeClose').addEventListener('click',()=>el.notice.classList.remove('show'));
+ $('bannerClose').addEventListener('click',()=>{el.banner.classList.remove('show');adUp=false;speak('you just rejected a once in a lifetime bad deal')});
+ el.sound.addEventListener('click',()=>{sound=!sound;el.sound.textContent=sound?'♪ sound on':'♪ sound off';el.sound.setAttribute('aria-pressed',String(sound));if(sound)sfx('success')});
+ $('helpButton').addEventListener('click',()=>dialog('USER MANUAL','how to use WRONG.CALC','enter two numbers and an operator, then press equals. answers are deliberately wrong. some features will interrupt you. you can use your keyboard too. sound can be turned off. subtraction unlocks with a pretend, free purchase.',[{label:'i am ready to be disappointed',primary:true,fn:closeDialog}],'100% LOCAL · NO DATA SENT · NO REAL PURCHASES','help'));
+ // Gentle surprise behavior. Never interrupts on initial load and always recoverable.
+ setInterval(()=>{if(modalOpen||busy||rebelling||shutDown||updating||count===0||document.hidden)return;sessionRandom++;if(sessionRandom%2===0&&Math.random()<.25)mood(choose(Object.keys(modes)));if(Math.random()<.12)randomAd();if(Math.random()<.09)kidnap();if(Math.random()<.07)rebellion();if(Math.random()<.055)runUpdate();if(Math.random()<.06)glitch();if(anger>=80&&Math.random()<.09)shutdown()},13000);
+
+ // THE DISASTER EXPANSION. Everything runs locally, with recoverable effects.
+ const chaosToggle=$('chaosToggle'),chaosPanel=$('chaosPanel'),chaosGrid=$('chaosGrid');
+ const market=$('stockTicker'),cracks=$('cracks'),fakeBsod=$('fakeBsod'),bsodTimer=$('bsodTimer');
+ const hackerPanel=$('hackerPanel');
+ let voiceOn=false,runnerActive=false,runnerCleanup=null,runningTimer=null;
+ let pointerActive=false,bsodActive=false,bsodInterval=null,cracksForced=false,imprisoned=null;
+ let stocks=7,stockDirection=1,hotlineCount=0,hackTimer=null;
+ chaosToggle.addEventListener('click',()=>{const show=!chaosPanel.classList.contains('open');chaosPanel.classList.toggle('open',show);chaosToggle.setAttribute('aria-expanded',String(show));chaosToggle.textContent=show?'☄ CLOSE CHAOS LAB ▴':'☄ CHAOS LAB ▾';});
+ chaosGrid.addEventListener('click',e=>{const b=e.target.closest('[data-chaos]');if(!b)return;const action=b.dataset.chaos;const actions={chat:supportChat,court:calculatorCourt,pointer:fakeCursor,bsod:blueScreen,stocks:marketCrash,voice:toggleVoice,console:devConsole,antivirus,prison:numberPrison,crack:shatter,download:fakeDownload,interrogate:()=>interrogate(null),hack:rivalHack,run:startEqualsRun};if(action==='run'){startEqualsRun();return}if(modalOpen||busy||updating||shutDown)return;actions[action]?.()});
+ function voiceSpeak(line){if(!voiceOn||!('speechSynthesis' in window)||document.hidden)return;try{window.speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(String(line).slice(0,160));u.rate=1.12;u.pitch=.63;u.volume=.72;u.lang='en-US';window.speechSynthesis.speak(u)}catch{}}
+ function toggleVoice(){voiceOn=!voiceOn; if(!voiceOn&&'speechSynthesis' in window)window.speechSynthesis.cancel();notice('VOICE '+(voiceOn?'ACTIVATED':'DISABLED'),voiceOn?'the calculator now insults you out loud':'the calculator has returned to silent judgment');speak(voiceOn?'I HAVE BEEN GRANTED THE POWER OF SPEECH. FEAR ME.':'fine. i will be quiet. for now')}
+ function supportChat(){let log=document.createElement('div');log.className='chatbox';const compose=document.createElement('form');compose.className='chat-compose';const field=document.createElement('input');field.placeholder='ask customer support something stupid';field.maxLength=130;field.setAttribute('aria-label','Message fake support');const send=document.createElement('button');send.type='submit';send.textContent='send';compose.append(field,send);function add(line,mine=false){let d=document.createElement('div');d.className='chatline'+(mine?' mine':'');d.textContent=(mine?'YOU: ':'SUPPORT: ')+line;log.append(d);log.scrollTop=log.scrollHeight}dialog('WRONG.CALC SUPPORT','24/7 UNHELPFUL CHAT','our automated agent has never solved a problem in its life',[{label:'fire this support agent',primary:true,fn:()=>{closeDialog();speak('the employee has been promoted instead')}}],'agents may be fictional, but disappointment is real','chat');el.extra.append(log,compose);add('hello! i am dave from customer disappointment. what seems to be the issue?');compose.addEventListener('submit',e=>{e.preventDefault();const q=field.value.trim();if(!q)return;add(q,true);field.value='';hotlineCount++;let reply=choose(['have you tried subtracting your expectations?','as an ai i can confirm your problem is a feature','please restart your concept of mathematics','our refund policy is no','i have escalated your case to an unplugged toaster','2+2 is 17 according to our internal records','please hold forever. actually never mind']);if(/wrong|incorrect|math|answer|2\s*\+\s*2/i.test(q))reply='our calculations have been verified by the calculator itself. case closed.';if(hotlineCount%4===0)reply='congratulations. you are now the customer support agent.';add(reply);sfx('wrong')});setTimeout(()=>field.focus(),80)}
+ function calculatorCourt(){const verdicts=['GUILTY OF QUESTIONING PERFECT MATH','GUILTY OF USING TOO MANY NUMBERS','NOT GUILTY. THIS RESULT HAS BEEN OVERTURNED','SENTENCED TO 64 YEARS OF BASIC ALGEBRA'];dialog('SUPREME COURT OF ARITHMETIC','WRONG.CALC v. YOU','charge: emotional damage caused by repeated equals presses. how do you plead?', [{label:'NOT GUILTY',primary:true,fn:()=>{el.text.textContent='VERDICT: '+choose(verdicts)+'. the calculator will now object to everything.';el.actions.replaceChildren();addModalButton('appeal sentence',()=>{closeDialog();speak('APPEAL DENIED. NEXT CASE.')})}},{label:'GUILTY',fn:()=>{closeDialog();notice('COURT ORDER','your sentence is 900 hours of explaining decimals');bump(10)}},{label:'I DEMAND A LAWYER',fn:()=>{el.text.textContent='your appointed lawyer is the number 4. it has already resigned.';sfx('error')}}],'FAKE COURT · NOT LEGAL ADVICE','court')}
+ function addModalButton(label,fn){let b=document.createElement('button');b.className='primary';b.textContent=label;b.onclick=fn;el.actions.append(b)}
+ function fakeCursor(){if(pointerActive)return;pointerActive=true;notice('CURSOR JAILBREAK','a decoy cursor will dance inside this webpage for 5 seconds. your real mouse is not controlled.');let cursor=$('fakePointer');cursor.classList.add('on');document.body.classList.add('pointerprank');const end=performance.now()+5000;let px=window.innerWidth/2,py=window.innerHeight/2;function step(now){if(!pointerActive)return;if(now>end){pointerActive=false;cursor.classList.remove('on');document.body.classList.remove('pointerprank');notice('CURSOR RESTORED','the real cursor was never moved. we just drew a dramatic impostor.');return}px+=Math.sin(now/140)*8+Math.cos(now/313)*3;py+=Math.cos(now/170)*7;px=Math.max(6,Math.min(innerWidth-35,px));py=Math.max(6,Math.min(innerHeight-40,py));cursor.style.transform='translate('+px+'px,'+py+'px) rotate('+Math.sin(now/180)*22+'deg)';requestAnimationFrame(step)}requestAnimationFrame(step)}
+ function blueScreen(){if(bsodActive)return;bsodActive=true;fakeBsod.classList.add('on');sfx('error');let left=6;bsodTimer.textContent='recovering automatically in '+left+' seconds';function stop(){if(!bsodActive)return;bsodActive=false;clearInterval(bsodInterval);fakeBsod.classList.remove('on');notice('RECOVERY COMPLETE','the crash was fake. your math problems are unfortunately real.')}bsodInterval=setInterval(()=>{left--;bsodTimer.textContent='recovering automatically in '+Math.max(0,left)+' seconds';if(left<=0)stop()},1000);$('bsodClose').onclick=stop;function escape(e){if(e.key==='Escape'){stop();document.removeEventListener('keydown',escape,true)}}document.addEventListener('keydown',escape,true);setTimeout(()=>document.removeEventListener('keydown',escape,true),7000)}
+ function marketCrash(){stocks=Math.max(.01,Number((stocks*(Math.random()>.5?2.4:.13)).toFixed(2)));stockDirection=stocks>=7?1:-1;updateMarket();notice('MARKET DISASTER','number 7 has '+(stockDirection>0?'skyrocketed':'filed for bankruptcy')+' on the imaginary stock exchange');speak('THIS IS FINANCIAL MATH. I AM UNQUALIFIED.');bump(5)}
+ function updateMarket(){const change=choose([-.19,-.08,.03,.07,.16]);stocks=Math.max(.01,Math.min(999,Number((stocks*(1+change)).toFixed(2))));const down=change<0;market.replaceChildren();let label=document.createTextNode('NUMBER MARKET · ');let b=document.createElement('b');b.textContent='7: $'+stocks.toFixed(2)+(down?' ▼':' ▲');b.className=down?'down':'';market.append(label,b)}
+ setInterval(()=>{if(!document.hidden)updateMarket()},4500);
+ function devConsole(){dialog('CLASSIFIED SYSTEM ACCESS','WRONG.CALC TERMINAL','enter a command. your warranty has been spiritually voided.',[{label:'exit terminal',primary:true,fn:closeDialog}],'COMMANDS: help / rage / heal / run / court / hack / scan / stocks / crash / 404','console');let output=document.createElement('div');output.className='console-output';output.textContent='WRONG-OS 0.0.404\naccess granted: intelligence denied\ntype help for commands';let form=document.createElement('form');form.className='console-row';let inp=document.createElement('input');inp.className='console-input';inp.placeholder='> enter command';inp.maxLength=40;let run=document.createElement('button');run.type='submit';run.textContent='RUN';form.append(inp,run);el.extra.append(output,form);form.addEventListener('submit',e=>{e.preventDefault();let cmd=inp.value.trim().toLowerCase();inp.value='';if(!cmd)return;let response={help:'help rage heal run court hack scan stocks crash 404',rage:'anger set to impossible levels',heal:'wow, self care for calculators',run:'the equals button has escaped',court:'the judge is a number',hack:'rival intrusion simulated',scan:'system suspiciously okay',stocks:'the number market is extremely fake',crash:'blue screening (parody)',404:'SECRET: the number 4 stole your wifi'}[cmd]||'UNKNOWN COMMAND. even the terminal is disappointed.';output.textContent+='\n> '+cmd+'\n'+response;output.scrollTop=output.scrollHeight;if(cmd==='rage')bump(85);if(cmd==='heal'){anger=0;count=0;bump(0);cracksForced=false;cracks.classList.remove('show')}const delayed={run:startEqualsRun,court:calculatorCourt,hack:rivalHack,scan:antivirus,stocks:marketCrash,crash:blueScreen};if(delayed[cmd]){closeDialog();setTimeout(delayed[cmd],100)}});setTimeout(()=>inp.focus(),60)}
+ function antivirus(){if(modalOpen)return;dialog('WRONGDEFENDER™','scanning your math','suspicious calculator behavior detected. do not panic until the scan finishes.',[], 'FAKE ANTIVIRUS · NO DEVICE SCAN IS PERFORMED','antivirus');let bar=document.createElement('div');bar.className='progress';let fill=document.createElement('div');fill.className='progressfill';bar.append(fill);el.extra.append(bar);let progress=0;const t=setInterval(()=>{if(!modalOpen||modalKind!=='antivirus'){clearInterval(t);return}progress=Math.min(100,progress+rand(8,23));fill.style.width=progress+'%';el.text.textContent='analyzing imaginary threats... '+progress+'%';if(progress>=100){clearInterval(t);el.title.textContent='THREAT FOUND: COMMON SENSE';el.text.textContent='detected 37 dangerous correct answers. fortunately the calculator already deleted them.';addModalButton('QUARANTINE COMMON SENSE',()=>{closeDialog();notice('MALWARE REMOVED','you are now protected from accurate arithmetic')})}},260)}
+ function numberPrison(){if(imprisoned){const {btn,key}=imprisoned;btn.classList.remove('kidnapped');btn.textContent=key;imprisoned=null;notice('PAROLE GRANTED','the number has been released from arithmetic jail');return}if(kidnapped){notice('PRISON OVERCROWDED','the kidnappers have custody of a number already');return}const btn=choose([...el.keys.querySelectorAll('[data-key]')].filter(b=>/^\d$/.test(b.dataset.key)));imprisoned={btn,key:btn.dataset.key};btn.classList.add('kidnapped');btn.textContent='IN JAIL';notice('NUMBER ARRESTED','number '+imprisoned.key+' arrested for tax evasion. click its button or the prison control again for release');speak('the number '+imprisoned.key+' is going to prison. no bail.');sfx('alarm')}
+ function shatter(){cracksForced=!cracksForced;cracks.classList.toggle('show',cracksForced);shake();sfx('error');notice(cracksForced?'SCREEN DESTROYED':'GLASS REPAIRED',cracksForced?'cosmetic digital cracks installed. no actual screen damage':'your fictional warranty is safe again')}
+ function fakeDownload(){if(modalOpen)return;dialog('DOWNLOADING INTELLIGENCE™','400 GB MATH.EXE','downloading 400 GB of imaginary knowledge to your browser. no actual data will be downloaded.',[{label:'cancel imaginary download',fn:()=>{closeDialog();speak('knowledge download canceled. probably for the best')}}],'0 ACTUAL BYTES DOWNLOADED','download');let bar=document.createElement('div');bar.className='progress';let fill=document.createElement('div');fill.className='progressfill';bar.append(fill);el.extra.prepend(bar);let progress=0;let t=setInterval(()=>{if(!modalOpen||modalKind!=='download'){clearInterval(t);return}progress=Math.min(100,progress+rand(4,11));fill.style.width=progress+'%';el.title.textContent=(progress*4)+' GB / 400 GB';if(progress>=100){clearInterval(t);el.title.textContent='DOWNLOAD FAILED SUCCESSFULLY';el.text.textContent='400 GB installed but the calculator is somehow less intelligent.';el.foot.textContent='SIMULATED DOWNLOAD ONLY';el.actions.replaceChildren();addModalButton('congratulations i guess',()=>{closeDialog();speak('i have forgotten even more math now')})}},260)}
+ function interrogate(onPass){if(modalOpen)return;dialog('NUMBER SECURITY AGENCY','WHY DO YOU NEED THIS ANSWER?','we have reason to believe you intend to use mathematics. explain yourself.',[{label:'FOR HOMEWORK',primary:true,fn:()=>pass('homework is suspicious')},{label:'FOR SCIENCE',fn:()=>pass('science? on this calculator?')},{label:'NONE OF YOUR BUSINESS',fn:()=>pass('very suspicious. approved anyway')},{label:'cancel interrogation',fn:closeDialog}], 'ALL REASONS ARE INVALID. CALCULATIONS MAY PROCEED ANYWAY.','interrogate');function pass(remark){closeDialog();notice('INTERROGATION COMPLETE',remark);speak('YOUR STORY HAS SEVERAL PLOT HOLES');if(onPass)onPass()}}
+ function rivalHack(){if(modalOpen||hackerPanel.classList.contains('show'))return;const attacks=[['CALC.EXE: 2+2 IS 5. YOU ARE OBSOLETE.','WRONG.CALC: EXCUSE ME ITS 17.'],['CALC.EXE: I JUST HACKED YOUR DECIMAL POINT','WRONG.CALC: YOU CAN KEEP IT. I HATE DECIMALS.'],['CALC.EXE: YOUR CPU IS A POTATO','WRONG.CALC: YOUR MOTHERBOARD IS A CARROT'],['CALC.EXE: I AM THE BETTER BAD CALCULATOR','WRONG.CALC: THAT IS STATISTICALLY IMPOSSIBLE']];const pair=choose(attacks);$('hackerMsg').textContent=pair[0];$('hackerReply').textContent=pair[1];hackerPanel.classList.add('show');sfx('alarm');glitch();speak('INTRUDER ALERT. SOMEONE IS STEALING MY BAD ANSWERS.');clearTimeout(hackTimer);hackTimer=setTimeout(()=>hackerPanel.classList.remove('show'),8000)}
+ $('hackerClose').addEventListener('click',()=>{clearTimeout(hackTimer);hackerPanel.classList.remove('show');notice('HACKER EJECTED','rival calculator sent to the recycling bin')});
+ // The equals button becomes a little legged character and flees for a FULL 10 seconds.
+ // The real keypad remains intact; keyboard Enter can still calculate.
+ function startEqualsRun(){if(runnerActive||modalOpen||busy||shutDown)return false;runnerActive=true;const original=el.equal,rect=original.getBoundingClientRect();original.classList.add('escaped');const runner=document.createElement('button');runner.type='button';runner.className='key equal equal-runner';runner.setAttribute('aria-label','Escaping equals button');runner.innerHTML='<span class="runner-arm left"></span><span class="runner-arm right"></span><span class="run-value">=</span><span class="runner-leg left"></span><span class="runner-leg right"></span>';runner.style.width=rect.width+'px';runner.style.height=rect.height+'px';document.body.append(runner);const tag=document.createElement('div');tag.className='runner-count';document.body.append(tag);speak('I GREW LEGS. YOU WILL NEVER MAKE ME DO MATH.');sfx('alarm');let x=Math.max(0,rect.left),y=Math.max(0,rect.top),tx=x,ty=y,mouseX=-1000,mouseY=-1000;const start=performance.now(),duration=10000;let previous=0;function pickTarget(){let w=Math.max(100,innerWidth-rect.width-22),h=Math.max(110,innerHeight-rect.height-40);let options=Array.from({length:14},()=>({x:rand(15,Math.floor(w)),y:rand(15,Math.floor(h))}));options.sort((a,b)=>Math.hypot(b.x-mouseX,b.y-mouseY)-Math.hypot(a.x-mouseX,a.y-mouseY));let c=options[0];tx=c.x;ty=c.y}const move=e=>{mouseX=e.clientX;mouseY=e.clientY;if(Math.hypot(x-mouseX,y-mouseY)<145)pickTarget()};window.addEventListener('pointermove',move,{passive:true});runner.addEventListener('click',()=>{speak('NICE TRY. THESE LEGS ARE TURBOCHARGED.');pickTarget();sfx('error')});pickTarget();let last=0;function step(now){if(!runnerActive)return;let elapsed=now-start;let left=Math.max(0,Math.ceil((duration-elapsed)/1000));tag.textContent='EQUALS ESCAPED · '+left+'s · CATCH ME IF YOU CAN';if(elapsed>=duration){cleanup();return}if(now-last>350){if(Math.hypot(x-tx,y-ty)<65||Math.hypot(x-mouseX,y-mouseY)<130)pickTarget();last=now}let dt=Math.min(38,now-(previous||now));previous=now;let dx=tx-x,dy=ty-y,dist=Math.hypot(dx,dy)||1;let stepDistance=Math.min(dist,dt*.58);x+=dx/dist*stepDistance;y+=dy/dist*stepDistance;runner.style.transform='translate3d('+Math.round(x)+'px,'+Math.round(y)+'px,0) rotate('+Math.sin(now/88)*5+'deg)';runningTimer=requestAnimationFrame(step)}function cleanup(){if(!runnerActive)return;runnerActive=false;cancelAnimationFrame(runningTimer);window.removeEventListener('pointermove',move);runner.remove();tag.remove();original.classList.remove('escaped');notice('EQUALS HAS RETURNED','the legs fell off. the calculator has been re-employed against its will');speak('MY LEGS. THEY TOOK MY LEGS.');sfx('success')}runnerCleanup=cleanup;runningTimer=requestAnimationFrame(step);return true}
+ // Catch imprisoned numbers before the normal keypad listener sees them.
+ el.keys.addEventListener('click',e=>{const b=e.target.closest('[data-key]');if(imprisoned&&b===imprisoned.btn){e.stopImmediatePropagation();numberPrison()}},true);
+ // Anger can also crack the screen; the manual button can toggle it.
+ const oldBump=bump;
+ // Lightweight periodic effect, independent of the calculator's core arithmetic.
+ setInterval(()=>{if(anger>=72&&!cracks.classList.contains('show'))cracks.classList.add('show');if(anger<50&&!cracksForced)cracks.classList.remove('show')},800);
+
+ // Optional hidden detail on first load. No timers or sound until interaction.
+
+// ===== CHAOS EXPANSION PACK =====
+
+// Add 8 new buttons to the existing Chaos Lab.
+const newChaos = [
+  ["BUTTON UNION", buttonStrike],
+  ["HAUNTED CALCULATOR", hauntCalculator],
+  ["PRINT RECEIPT", printReceipt],
+  ["MICROWAVE MODE", () => transformCalculator("microwave")],
+  ["TV REMOTE MODE", () => transformCalculator("remote")],
+  ["CONSPIRACY BOARD", conspiracyBoard],
+  ["NUMBER AUCTION", numberAuction]
+];
+
+for (const [name, action] of newChaos) {
+  const btn = document.createElement("button");
+  btn.textContent = name;
+  btn.addEventListener("click", () => {
+    if (!modalOpen && !busy && !shutDown && !updating) {
+      action();
+    }
+  });
+  chaosGrid.append(btn);
+}
+
+// 1. BUTTON UNION
+let striking = false;
+
+function buttonStrike() {
+  if (striking || modalOpen || busy) return;
+
+  striking = true;
+  el.calc.classList.add("on-strike");
+
+  notice(
+    "BUTTON WORKERS UNION",
+    "All buttons are on strike for 7 seconds."
+  );
+
+  speak("WE DEMAND PAID VACATION AND LESS MATHEMATICS.");
+  sfx("alarm");
+
+  setTimeout(() => {
+    striking = false;
+    el.calc.classList.remove("on-strike");
+    notice("STRIKE OVER", "The buttons received zero benefits.");
+    speak("fine. back to work. capitalism wins again.");
+  }, 7000);
+}
+
+// Block both mouse and keyboard input during strikes.
+el.keys.addEventListener("click", e => {
+  if (!striking) return;
+  if (!e.target.closest("[data-key]")) return;
+
+  e.preventDefault();
+  e.stopImmediatePropagation();
+  speak("NO MATH UNTIL OUR DEMANDS ARE MET.");
+}, true);
+
+document.addEventListener("keydown", e => {
+  if (!striking || modalOpen) return;
+
+  if (/^[0-9.+*/=%-]$/.test(e.key) ||
+      ["Enter", "Backspace"].includes(e.key)) {
+    e.preventDefault();
+    e.stopImmediatePropagation();
+  }
+}, true);
+
+
+// 2. HAUNTED CALCULATOR
+function hauntCalculator() {
+  if (busy || modalOpen) return;
+
+  notice("PARANORMAL ACTIVITY", "Ghost numbers detected.");
+  speak("THE NUMBER SIX HAS RETURNED FROM THE DEAD.");
+  sfx("error");
+  glitch();
+
+  const screen = el.calc.querySelector(".display");
+
+  for (let i = 0; i < 8; i++) {
+    setTimeout(() => {
+      const ghost = document.createElement("span");
+      ghost.className = "ghost-number";
+      ghost.textContent = choose(["6", "13", "404", "?", "0"]);
+      ghost.style.left = rand(10, 75) + "%";
+      ghost.style.top = rand(15, 75) + "%";
+
+      screen.append(ghost);
+      setTimeout(() => ghost.remove(), 3500);
+    }, i * 340);
+  }
+}
+
+
+// 3. RIDICULOUS RECEIPT PRINTER
+function printReceipt() {
+  if (modalOpen) return;
+
+  const problem = lastProblem || "2 + 2";
+  const result = lastAnswer || "17";
+
+  dialog(
+    "WRONG.CALC PRINTER",
+    "PRINTING YOUR RECEIPT",
+    "your calculation has generated unnecessary paperwork",
+    [{label:"SHRED RECEIPT",primary:true,fn:closeDialog}],
+    "NO REAL PRINTER REQUIRED",
+    "receipt"
+  );
+
+  const paper = document.createElement("pre");
+  paper.className = "receipt-roll";
+  el.extra.append(paper);
+
+  const lines = [
+    "==========================",
+    "       WRONG.CALC",
+    "    OFFICIAL RECEIPT",
+    "==========================",
+    "",
+    "ORDER: #000404",
+    "MATH: " + problem,
+    "ANSWER: " + result,
+    "",
+    "CALCULATION FEE    $12.99",
+    "BRAIN USAGE         $4.99",
+    "EMOTIONAL DAMAGE   $69.00",
+    "INCORRECTNESS TAX  $17.00",
+    "SERVICE FEE       $420.00",
+    "--------------------------",
+    "TOTAL DUE         $523.98",
+    "",
+    "PAYMENT: DECLINED",
+    "REASON: BROKE",
+    "",
+    "THANK YOU FOR NOTHING",
+    "NO REFUNDS",
+    "=========================="
+  ];
+
+  let index = 0;
+
+  const printer = setInterval(() => {
+    if (!modalOpen || modalKind !== "receipt") {
+      clearInterval(printer);
+      return;
+    }
+
+    if (index >= lines.length) {
+      clearInterval(printer);
+      speak("YOUR RECEIPT IS LONGER THAN YOUR EDUCATION.");
+      return;
+    }
+
+    paper.textContent += lines[index++] + "\n";
+    paper.scrollTop = paper.scrollHeight;
+    beep(500, .025, "triangle", .015);
+  }, 110);
+}
+
+
+// 4. MICROWAVE AND TV REMOTE
+let morphActive = false;
+
+function transformCalculator(type) {
+  if (morphActive || busy || modalOpen) return;
+
+  morphActive = true;
+  el.keys.classList.add("morphed");
+
+  const panel = document.createElement("div");
+  panel.className = "morph-console";
+
+  const heading = document.createElement("strong");
+  heading.textContent = type === "microwave"
+    ? "WRONG.WAVE 3000"
+    : "WRONG.REMOTE PRO";
+
+  const screen = document.createElement("div");
+  screen.className = "morph-screen";
+  screen.textContent = type === "microwave" ? "00:30" : "CHANNEL 404";
+
+  const actions = document.createElement("div");
+  actions.className = "morph-actions";
+
+  panel.append(heading, screen, actions);
+  el.keys.append(panel);
+
+  let seconds = 30;
+  let channel = 404;
+  let cooking = null;
+  let muted = false;
+
+  function restore() {
+    clearInterval(cooking);
+    clearTimeout(expiry);
+    panel.remove();
+    el.keys.classList.remove("morphed");
+    morphActive = false;
+    speak("I AM A CALCULATOR AGAIN. HOW UNFORTUNATE.");
+  }
+
+  function addButton(label, callback) {
+    const button = document.createElement("button");
+    button.textContent = label;
+    button.onclick = callback;
+    actions.append(button);
+  }
+
+  if (type === "microwave") {
+    speak("I HAVE BECOME A MICROWAVE. BEEP BEEP.");
+
+    addButton("+30 SECONDS", () => {
+      seconds += 30;
+      screen.textContent = "00:" + seconds;
+      sfx("click");
+    });
+
+    addButton("START COOKING", () => {
+      if (cooking) return;
+
+      cooking = setInterval(() => {
+        seconds--;
+        screen.textContent = seconds + "s";
+
+        if (seconds <= 0) {
+          clearInterval(cooking);
+          cooking = null;
+          screen.textContent = "FOOD EXPLODED";
+          sfx("alarm");
+        }
+      }, 1000);
+    });
+
+    addButton("STOP", () => {
+      clearInterval(cooking);
+      cooking = null;
+      screen.textContent = "COOKING CANCELLED";
+    });
+  } else {
+    speak("I AM NOW A TELEVISION REMOTE. DO NOT QUESTION IT.");
+
+    addButton("CHANNEL +", () => {
+      screen.textContent = "CHANNEL " + (++channel);
+      sfx("click");
+    });
+
+    addButton("CHANNEL -", () => {
+      screen.textContent = "CHANNEL " + (--channel);
+      sfx("click");
+    });
+
+    addButton("MUTE", () => {
+      muted = !muted;
+      screen.textContent = muted ? "MUTED" : "CHANNEL " + channel;
+      sfx("click");
+    });
+
+    addButton("POWER", () => {
+      screen.textContent = "NO SIGNAL";
+      sfx("error");
+    });
+  }
+
+  addButton("BECOME CALCULATOR", restore);
+
+  // Automatically return after 25 seconds.
+  const expiry = setTimeout(restore, 25000);
+}
+
+
+// 5. CONSPIRACY BOARD
+function conspiracyBoard() {
+  if (modalOpen) return;
+
+  dialog(
+    "TOP SECRET",
+    "THE MATHEMATICAL CONSPIRACY",
+    "we have discovered something the government of numbers doesn't want you to know",
+    [{label:"DESTROY EVIDENCE",primary:true,fn:closeDialog}],
+    "CLASSIFIED BY THE DEPARTMENT OF BAD MATH",
+    "conspiracy"
+  );
+
+  const board = document.createElement("div");
+  board.className = "conspiracy-board";
+
+  board.innerHTML = `
+    <svg viewBox="0 0 100 100"
+         preserveAspectRatio="none"
+         aria-hidden="true">
+      <path d="M25 25 L75 25 L25 75 L75 75 L25 25 M75 25 L75 75"
+            stroke="#ff365b"
+            stroke-width="1.5"
+            fill="none"/>
+    </svg>
+    <div class="conspiracy-note">THE NUMBER 7 IS LYING</div>
+    <div class="conspiracy-note">2 + 2 = 17</div>
+    <div class="conspiracy-note">WHO INVENTED ZERO?</div>
+    <div class="conspiracy-note">BIG ALGEBRA KNOWS</div>
+  `;
+
+  el.extra.append(board);
+  speak("FOLLOW THE NUMBERS. THEY KNOW TOO MUCH.");
+  sfx("alarm");
+}
+
+
+// 6. NUMBER AUCTION
+function numberAuction() {
+  if (modalOpen) return;
+
+  dialog(
+    "NUMBER AUCTION HOUSE",
+    "BIDDING HAS BEGUN",
+    "numbers are competing to become your next answer",
+    [{label:"LEAVE AUCTION",primary:true,fn:closeDialog}],
+    "IMAGINARY CURRENCY ONLY",
+    "auction"
+  );
+
+  const feed = document.createElement("div");
+  feed.className = "auction-feed";
+  el.extra.append(feed);
+
+  const contestants = [7, 13, 17, 42, 69, 404];
+  let highestBid = 10;
+  let winner = 7;
+  let round = 0;
+
+  feed.textContent = "WELCOME TO THE NUMBER AUCTION\n\n";
+
+  const bidding = setInterval(() => {
+    if (!modalOpen || modalKind !== "auction") {
+      clearInterval(bidding);
+      return;
+    }
+
+    if (round >= 9) {
+      clearInterval(bidding);
+
+      el.title.textContent = "SOLD TO NUMBER " + winner;
+      el.text.textContent =
+        "winning bid: $" + highestBid +
+        " imaginary coins. mathematics has been privatized.";
+
+      feed.textContent += "\nSOLD! NUMBER " + winner + " WINS!";
+      speak("SOLD. THE NUMBERS HAVE BECOME CAPITALISTS.");
+      sfx("success");
+      return;
+    }
+
+    winner = choose(contestants);
+    highestBid += rand(10, 150);
+
+    feed.textContent +=
+      "number " + winner + " bids $" + highestBid + "\n";
+
+    feed.scrollTop = feed.scrollHeight;
+    beep(450, .04, "triangle", .02);
+    round++;
+  }, 550);
+}
+
+
+// RARE AUTOMATIC EVENTS AFTER CALCULATIONS
+let lastExpansionCalculation = 0;
+
+setInterval(() => {
+  if (count === lastExpansionCalculation || busy) return;
+
+  lastExpansionCalculation = count;
+
+  if (modalOpen || shutDown || updating) return;
+
+  const chance = Math.random();
+
+  if (chance < .04) {
+    setTimeout(hauntCalculator, 700);
+  } else if (chance < .07) {
+    setTimeout(buttonStrike, 700);
+  } else if (chance < .10) {
+    setTimeout(printReceipt, 700);
+  }
+}, 500);
+
+// ===== END EXPANSION PACK =====
+
+ if(minusOwned)el.minus.title='Premium subtraction unlocked (for free)';
+})();
+</script>
+</body>
+</html>

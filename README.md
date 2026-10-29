@@ -5,6 +5,11 @@
 
 Welcome to WRONG.CALC, a calculator that has absolutely no idea what it's doing but is extremely confident about it.
 
+## 🎮 Play WRONG.CALC
+
+**[CLICK HERE TO PLAY WRONG.CALC](https://albertinothecoder.github.io/WRONG.CALC/)**
+
+
 Built to solve mathematical problems by creating significantly more problems.
 
 ## Features

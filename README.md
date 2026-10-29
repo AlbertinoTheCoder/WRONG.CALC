@@ -1,67 +1,82 @@
-# WRONG.CALC
-### The World's Worst Calculator™
+# ≠ WRONG.CALC
 
-**0% Accuracy. 100% Confidence.**
+### THE WORLD'S WORST CALCULATOR™
 
-Welcome to WRONG.CALC, a calculator that has absolutely no idea what it's doing but is extremely confident about it.
+**0% ACCURACY · 100% CONFIDENCE · 100% BAD DECISIONS**
 
-## 🎮 Play WRONG.CALC
-
-**[CLICK HERE TO PLAY WRONG.CALC](https://albertinothecoder.github.io/WRONG.CALC/)**
-
-
-Built to solve mathematical problems by creating significantly more problems.
-
-## Features
-
-- **Confidently Wrong Answers** — Calculates everything incorrectly and refuses to apologize.
-- **Runaway Equals Button** — The equals button grows legs and runs away for 10 seconds.
-- **Fake AI Intelligence** — Powered by absolutely nothing.
-- **Calculator Anger** — Gets increasingly furious the more you use it.
-- **Button Union** — Calculator buttons go on strike.
-- **Haunted Calculator** — Ghost numbers possess the screen.
-- **Math Autocorrect** — Changes your numbers because it thinks it knows better.
-- **Fake Premium Math** — Unlock subtraction through a ridiculous pretend purchase.
-- **Calculator Court** — Get sued for emotional damage.
-- **Fake Customer Support** — Talk to the world's least helpful support agent.
-- **Calculator Shapeshifting** — Turns into a microwave or TV remote.
-- **Number Kidnapping** — Numbers disappear and demand ransom.
-- **Conspiracy Board** — Uncover the horrifying truth about mathematics.
-- **Number Auctions** — Watch numbers bid to become your answer.
-- **Chaos Lab** — Manually trigger mathematical disasters.
-
-And plenty more completely unnecessary features.
-
-## How to Play
-
-1. Open the website.
-2. Enter a mathematical expression.
-3. Press `=`.
-4. Receive an extremely questionable answer.
-5. Attempt to convince the calculator it's wrong.
-6. Regret everything.
-
-## How to Run Locally
-
-Download `index.html` and open it in any modern web browser.
-
-No installation, accounts, APIs, or servers required.
-
-## Technology
-
-- HTML5
-- CSS3
-- Vanilla JavaScript
-- Terrible mathematical decisions
-
-## Disclaimer
-
-WRONG.CALC is a parody project created for entertainment.
-
-Do not use it for homework, engineering, financial calculations, rocket science, or literally anything requiring accurate mathematics.
-
-No real payments or downloads are performed.
+[**▶ PLAY WRONG.CALC ONLINE**](https://albertinothecoder.github.io/WRONG.CALC/)
 
 ---
 
-**Made with unnecessary confidence and an alarming lack of common sense.**
+## What is WRONG.CALC?
+
+Imagine a calculator with the confidence of a genius and the intelligence of a microwave.
+
+Now imagine that microwave can sue you, steal your numbers, run away on tiny legs, and charge you for subtraction.
+
+**Congratulations. You've discovered WRONG.CALC.**
+
+This is a deliberately terrible calculator built with HTML, CSS, and JavaScript. It runs entirely in your browser and specializes in making simple mathematics unnecessarily complicated.
+
+## The chaos
+
+| Feature | What happens |
+|---|---|
+| Wrong Answers | Every answer is confidently questionable |
+| Runaway Equals | The equals button grows legs and escapes |
+| Calculator Anger | The more you calculate, the angrier it gets |
+| Premium Subtraction | Unlock subtraction with a pretend purchase |
+| Button Union | Buttons go on strike |
+| Haunted Calculator | Ghost numbers invade your screen |
+| Math Autocorrect | Your numbers get corrected against your will |
+| Calculator Court | Get sued for mathematical misconduct |
+| Fake AI Support | Customer support makes everything worse |
+| Shapeshifting | Your calculator becomes a microwave or TV remote |
+| Number Auctions | Numbers bid to become your answer |
+| Conspiracy Board | Exposes the secret truth about mathematics |
+| Chaos Lab | Manually unleash mathematical disasters |
+
+And plenty more features nobody asked for.
+
+## How to play
+
+1. Enter an equation.
+2. Press the equals button, assuming it hasn't escaped.
+3. Receive an answer.
+4. Question the answer.
+5. Get insulted.
+6. Repeat until the calculator emotionally collapses.
+
+## Run it yourself
+
+Clone the repository:
+
+```bash
+git clone https://github.com/AlbertinoTheCoder/WRONG.CALC.git
+```
+
+Open `index.html` in a modern browser.
+
+No backend, no API key, no installation, and absolutely no intelligence required.
+
+## Built with
+
+**HTML5 · CSS3 · Vanilla JavaScript**
+
+No frameworks. No external math libraries. Just pure chaos.
+
+## Important disclaimer
+
+WRONG.CALC is an entertainment project. Its answers are intentionally unreliable.
+
+Do not use this calculator for homework, taxes, engineering, rocket science, or anything that requires actual mathematics.
+
+Fake purchases, downloads, security scans, and system crashes are simulated.
+
+---
+
+### THE CALCULATOR IS NEVER WRONG. YOU ARE.
+
+[**PLAY NOW**](https://albertinothecoder.github.io/WRONG.CALC/) · [**VIEW SOURCE**](https://github.com/AlbertinoTheCoder/WRONG.CALC)
+
+*Made with unnecessary confidence.*

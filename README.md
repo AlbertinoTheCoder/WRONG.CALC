@@ -19,8 +19,7 @@ A calculator that lives in your browser and absolutely refuses to do mathematics
 
 <br>
 
-<img src="preview.png?v=2" alt="WRONG.CALC Screenshot" width="480">
-
+<img src="preview-v2.png" alt="WRONG.CALC" width="480">
 </div>
 
 ## Your math, your problem.

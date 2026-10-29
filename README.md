@@ -1,12 +1,12 @@
 <a href="https://albertinothecoder.github.io/WRONG.CALC/">
-  <img src="docs/banner.svg" alt="WRONG.CALC ? Small sums. Big mistakes. A calculator confidently answers nine plus nine with FISH." width="100%">
+  <img src="docs/banner.svg" alt="WRONG.CALC - Small sums. Big mistakes. A calculator confidently answers nine plus nine with FISH." width="100%">
 </a>
 
 <p align="center">
-  <a href="https://albertinothecoder.github.io/WRONG.CALC/"><strong>Play WRONG.CALC ?</strong></a>
-  &nbsp; ? &nbsp;
+  <a href="https://albertinothecoder.github.io/WRONG.CALC/"><strong>Play WRONG.CALC &nearr;</strong></a>
+  &nbsp; &middot; &nbsp;
   <a href="#run-locally">Run locally</a>
-  &nbsp; ? &nbsp;
+  &nbsp; &middot; &nbsp;
   <a href="#the-code">The code</a>
 </p>
 
